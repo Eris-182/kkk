@@ -6,9 +6,9 @@ const path = require('path')
 let app = express();
 
 console.log(path.join(__dirname))
-app.use(express.static(path.join(__filename, '..', '..', '..','public')));
+app.use(express.static(path.join(__filename, '..','public')));
 app.set("view engine", "ejs");
-app.set("views", path.join(__filename, '..', '..', '..', 'views'));
+app.set("views", path.join(__filename, '..', 'views'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
