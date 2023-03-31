@@ -2,6 +2,7 @@ require("dotenv").config();
 const request = require("request");
 const moment = require("moment");
 const chatBotService = require("../services/chatBotService");
+const chatbot = require('../util')
 
 const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
@@ -22,7 +23,7 @@ let postWebhook = (req, res) => {
     if (body.object === 'page') {
 
         // Iterate over each entry - there may be multiple if batched
-        body.entry.forEach(function(entry) {
+        body.entry.forEach(function (entry) {
 
             // Gets the body of the webhook event
             let webhook_event = entry.messaging[0];
@@ -78,94 +79,10 @@ let getWebhook = (req, res) => {
 
 // Handles messages events
 let handleMessage = async (sender_psid, message) => {
-    //checking quick reply
-    if (message && message.quick_reply && message.quick_reply.payload) {
-        if (message.quick_reply.payload === "SMALL" || message.quick_reply.payload === "MEDIUM" || message.quick_reply.payload === "LARGE") {
-            //asking about phone number
-            if (message.quick_reply.payload === "SMALL") user.quantity = "1-2 people";
-            if (message.quick_reply.payload === "MEDIUM") user.quantity = "2-5 people";
-            if (message.quick_reply.payload === "LARGE") user.quantity = "More than 5 people";
-            await chatBotService.markMessageSeen(sender_psid);
-            await chatBotService.sendTypingOn(sender_psid);
-            await chatBotService.sendMessageAskingPhoneNumber(sender_psid);
-            return;
-        }
-        // pay load is a phone number
-        if (message.quick_reply.payload !== " ") {
-            //done a reservation
-            // npm install --save moment to use moment
-            user.phoneNumber = message.quick_reply.payload;
-            user.createdAt = moment(Date.now()).zone("+07:00").format('MM/DD/YYYY h:mm A');
-            //send a notification to Telegram Group chat by Telegram bot.
-            await chatBotService.sendNotificationToTelegram(user);
-
-            // send messages to the user
-            await chatBotService.markMessageSeen(sender_psid);
-            await chatBotService.sendTypingOn(sender_psid);
-            await chatBotService.sendMessageDoneReserveTable(sender_psid);
-        }
-        return;
-    }
-
-    //handle text message
-    let entity = handleMessageWithEntities(message);
-    let locale = entity.locale;
-
-    await chatBotService.sendTypingOn(sender_psid);
-    await chatBotService.markMessageSeen(sender_psid);
-
-    if (entity.name === "wit$datetime:datetime") {
-        //handle quick reply message: asking about the party size , how many people
-        user.time = moment(entity.value).zone("+07:00").format('MM/DD/YYYY h:mm A');
-
-        await chatBotService.sendMessageAskingQuality(sender_psid);
-    } else if (entity.name === "wit$phone_number:phone_number") {
-        //handle quick reply message: done reserve table
-
-        user.phoneNumber = entity.value;
-        user.createdAt = moment(Date.now()).zone("+07:00").format('MM/DD/YYYY h:mm A');
-        //send a notification to Telegram Group chat by Telegram bot.
-        await chatBotService.sendNotificationToTelegram(user);
-
-        // send messages to the user
-        await chatBotService.sendMessageDoneReserveTable(sender_psid);
-
-    } else {
-        //default reply
-        await chatBotService.sendMessageDefaultForTheBot(sender_psid);
-    }
-
+    //default reply
+    await chatBotService.sendMessageDefaultForTheBot(sender_psid);
     //handle attachment message
 };
-
-let handleMessageWithEntities = (message) => {
-    let entitiesArr = [ "wit$datetime:datetime", "wit$phone_number:phone_number", "wit$greetings", "wit$thanks", "wit$bye" ];
-    let entityChosen = "";
-    let data = {}; // data is an object saving value and name of the entity.
-    entitiesArr.forEach((name) => {
-        let entity = firstTrait(message.nlp, name.trim());
-        if (entity && entity.confidence > 0.8) {
-            entityChosen = name;
-            data.value = entity.value;
-        }
-    });
-
-    data.name = entityChosen;
-
-    // checking language
-    if (message && message.nlp && message.nlp.detected_locales) {
-        if (message.nlp.detected_locales[0]) {
-            let locale = message.nlp.detected_locales[0].locale;
-            data.locale = locale.substring(0, 2)
-        }
-
-    }
-    return data;
-};
-
-// function firstEntity(nlp, name) {
-//     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
-// }
 
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
@@ -186,51 +103,33 @@ let handlePostback = async (sender_psid, received_postback) => {
             let username = await chatBotService.getFacebookUsername(sender_psid);
             user.name = username;
             //send welcome response to users
-
             await chatBotService.sendResponseWelcomeNewCustomer(username, sender_psid);
             break;
-        case "MAIN_MENU":
-            //send main menu to users
-            await chatBotService.sendMainMenu(sender_psid);
-            break;
-        case "LUNCH_MENU":
-            await chatBotService.sendLunchMenu(sender_psid);
-            break;
-        case "DINNER_MENU":
-            await chatBotService.sendDinnerMenu(sender_psid);
-            break;
-        case "PUB_MENU":
-            await chatBotService.sendPubMenu(sender_psid);
-            break;
-        case "RESERVE_TABLE":
-            await chatBotService.handleReserveTable(sender_psid);
-            break;
-        case "SHOW_ROOMS":
-            await chatBotService.handleShowRooms(sender_psid);
-            break;
-        case "SHOW_ROOM_DETAIL":
-            await chatBotService.showRoomDetail(sender_psid);
-            break;
-        case "SHOW_APPETIZERS":
-            await chatBotService.sendAppetizer(sender_psid);
-            break;
 
-        case "SHOW_ENTREE_SALAD":
-            await chatBotService.sendSalad(sender_psid);
-            break;
-        case "SHOW_FISH":
-            await chatBotService.sendFish(sender_psid);
-            break;
-        case "SHOW_CLASSICS":
-            await chatBotService.sendClassic(sender_psid);
-            break;
-
-        case "BACK_TO_MAIN_MENU":
-            await chatBotService.goBackToMainMenu(sender_psid);
-            break;
-        case "BACK_TO_LUNCH_MENU":
-            await chatBotService.goBackToLunchMenu(sender_psid);
-            break;
+        case "VIEW_MEOW":
+            let url = await chatbot.newImageDog();
+            let response2 = {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "media",
+                        "elements": [
+                            {
+                                "media_type": "image",
+                                "url": url,
+                                "buttons": [
+                                    {
+                                        "type": "postback",
+                                        "title": "Xem ảnh mèo",
+                                        "payload": "VIEW_MEOW"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
+            callSendAPI(sender_psid, response2)
 
         case "yes":
             response = { text: "Thank you!" };
