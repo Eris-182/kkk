@@ -106,7 +106,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             await chatBotService.sendResponseWelcomeNewCustomer(username, sender_psid);
             break;
 
-        case "VIEW_MEOW":
+        case "VIEW_DOGS":
             let url = await chatbot.newImageDog();
             let response2 = {
                 "attachment": {
@@ -120,8 +120,8 @@ let handlePostback = async (sender_psid, received_postback) => {
                                 "buttons": [
                                     {
                                         "type": "postback",
-                                        "title": "Xem ảnh mèo",
-                                        "payload": "VIEW_MEOW"
+                                        "title": "Xem ảnh cún",
+                                        "payload": "VIEW_DOGS"
                                     }
                                 ]
                             }
@@ -129,8 +129,8 @@ let handlePostback = async (sender_psid, received_postback) => {
                     }
                 }
             };
-            callSendAPI(sender_psid, response2)
-
+            callSendAPI(sender_psid, response2);
+            break;
         case "yes":
             response = { text: "Thank you!" };
             callSendAPI(sender_psid, response);

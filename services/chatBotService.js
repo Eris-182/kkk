@@ -44,7 +44,7 @@ let sendResponseWelcomeNewCustomer = (username, sender_psid) => {
                                     {
                                         "type": "postback",
                                         "title": "Xem ảnh cún",
-                                        "payload": "VIEW_DOG",
+                                        "payload": "VIEW_DOGS",
                                     },
                                     {
                                         "type": "postback",
