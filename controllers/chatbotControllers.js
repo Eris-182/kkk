@@ -94,7 +94,7 @@ let handlePostback = async (sender_psid, received_postback) => {
     // Get the payload for the postback
     let payload = received_postback.payload;
     // Set the response based on the postback payload
-
+    console.log(payload)
     await chatBotService.markMessageSeen(sender_psid);
     switch (payload) {
         case "GET_STARTED":
