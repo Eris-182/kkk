@@ -131,6 +131,31 @@ let handlePostback = async (sender_psid, received_postback) => {
             };
             callSendAPI(sender_psid, response2);
             break;
+        case "VIEW_MEOW":
+            let url1 = await chatbot.newImageMeo();
+            let response3 = {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "media",
+                        "elements": [
+                            {
+                                "media_type": "image",
+                                "url": url1,
+                                "buttons": [
+                                    {
+                                        "type": "postback",
+                                        "title": "Xem ảnh cún",
+                                        "payload": "VIEW_DOGS"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
+            callSendAPI(sender_psid, response3);
+            break;
         case "yes":
             response = { text: "Thank you!" };
             callSendAPI(sender_psid, response);
