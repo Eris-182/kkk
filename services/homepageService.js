@@ -131,8 +131,5 @@ let sendGuideToUseBot = (sender_psid) => {
 };
 module.exports = {
     setUpMessengerPlatform: setUpMessengerPlatform,
-    sendResponseGreetings: sendResponseGreetings,
-    sendResponseThanks: sendResponseThanks,
-    sendResponseBye: sendResponseBye,
     sendGuideToUseBot: sendGuideToUseBot
 };
