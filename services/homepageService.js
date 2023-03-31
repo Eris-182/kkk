@@ -20,12 +20,12 @@ let setUpMessengerPlatform = (PAGE_ACCESS_TOKEN) => {
                             {
                                 "type": "postback",
                                 "title": "Kết nối Sumi",
-                                "payload": "VIEW_MEOW",
+                                "payload": "CONNECT_SUMI",
                             },
                             {
                                 "type": "postback",
                                 "title": "Ngắt kết nối Sumi",
-                                "payload": "VIEW_MEOW",
+                                "payload": "DISCONNECT_SUMI",
                             },
                             {
                                 "type": "postback",
@@ -35,17 +35,17 @@ let setUpMessengerPlatform = (PAGE_ACCESS_TOKEN) => {
                             {
                                 "type": "postback",
                                 "title": "Xem ảnh cún",
-                                "payload": "VIEW_MEOW",
+                                "payload": "VIEW_DOGS",
                             },
                             {
                                 "type": "postback",
                                 "title": "Nghe nhạc",
-                                "payload": "VIEW_MEOW",
+                                "payload": "PLAYMUSIC",
                             },
                             {
                                 "type": "postback",
                                 "title": "Thông tin của bạn",
-                                "payload": "VIEW_MEOW",
+                                "payload": "VIEW_PROFILE",
                             }
                         ]
                     }
@@ -78,7 +78,7 @@ let sendGuideToUseBot = (sender_psid) => {
         try {
 
             let response1 = {
-                "text" : "Hi there! I'm a chatbot building with Node.js platform.\nSo, What can I do? 😎" +
+                "text": "Hi there! I'm a chatbot building with Node.js platform.\nSo, What can I do? 😎" +
                     "\n\nFirst, I can show you the restaurant's menu: lunch, dinner and pub menu, etc. " +
                     "\n\nThen, you can make a reservation. No worry, it isn't a 'real' restaurant. Feel free to test me. 😊"
             };
@@ -88,7 +88,7 @@ let sendGuideToUseBot = (sender_psid) => {
                     "\n\nTry to say: hello, bye, thanks a lot, Bonjour 🇫🇷, etc. you will understand what I mean. 😗"
             };
             let response3 = {
-                text:  "Finally, remember I'm just a bot. So, That 's what can do for you today. 🤠" +
+                text: "Finally, remember I'm just a bot. So, That 's what can do for you today. 🤠" +
                     "\n\nBuild this bot from scratch with Node.js:👇" +
                     "\nYoutube: \n👉 https://bit.ly/tutorialBuildAwesomeBot"
             };

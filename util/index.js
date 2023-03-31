@@ -9,6 +9,8 @@ let newImageDog = () => {
             url: url,
             method: 'GET'
         }, (err, res, body) => {
+
+            console.log("Util ảnh chó: " + body)
             if (!err) {
                 resolve(body.data.url)
             }
